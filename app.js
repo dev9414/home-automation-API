@@ -1,18 +1,22 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const cors = require("cors");
 const mongoose = require("mongoose");
-
 const app = express();
 app.set("view engine", "ejs");
-
 app.use(
   bodyParser.urlencoded({
     extended: true,
   })
 );
+var corsOptions = {
+  origin: 'http://localhost:3001',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions))
 
-mongoose.connect("mongodb://localhost:27017/API", { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost:27017/API", {  useUnifiedTopology: true ,useNewUrlParser: true });
 
 const deviceSchema = {
   device: String,
@@ -29,13 +33,13 @@ app
   .route("/devices")
   .get(function (req, res) {
     Device.find(function (err, foundDevices) {
-      var output = [];
-      for (var i = 0; i < foundDevices.length; i++) {
-        output.push(foundDevices[i]["device"]);
-      }
+      // var output = [];
+      // for (var i = 0; i < foundDevices.length; i++) {
+      //   output.push(foundDevices[i]["device"]);
+      // }
       //console.log(foundDevices);
       if (!err) {
-        res.send(output);
+        res.send(foundDevices);
       } else {
         res.send(err);
       }
@@ -48,7 +52,7 @@ app
     });
     newDevice.save(function (err) {
       if (!err) {
-        res.send("Sucessfully added a new article");
+        res.send("Sucessfully added a new device");
       } else {
         res.send(err);
       }
@@ -76,19 +80,18 @@ app
       }
     });
   })
-  .put(function (req, res) {
+  .post(function (req, res) {
     Device.update(
       { device: req.params.device },
-      { device: req.body.device, status: req.body.status },
+      { device: req.params.device,status: req.body.status },
       { overwrite: true },
       function (err) {
         if (!err) {
-          res.send("database updated sucefully!!");
+          res.send("database updated sucessfully!!");
         }
       }
     );
   })
-
   .patch(function (req, res) {
     Device.update({ device: req.params.device }, { $set: req.body }, function (
       err

@@ -10,18 +10,46 @@
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 </head>
-<body>
+<body class="container">
    <h1>
         Home Automation
     </h1>
-    <label class="checkbox-inline">
-        <input type="checkbox" checked data-toggle="toggle"> fan
-      </label>
-      <label class="checkbox-inline">
-        <input type="checkbox" data-toggle="toggle"> light
-      </label>
-      <label class="checkbox-inline">
-        <input type="checkbox" data-toggle="toggle"> lock
-      </label>
+    <div id="listing">
+    </div>
+      <script>
+        $(document).ready(()=>{
+          getData();
+        });
+        function getData(){
+            $.ajax({url: "/devices", success: function(result){
+              onData(result);
+            }});
+        }
+        // [{"_id":"5ebfb841c679c735342173e2","device":"fan","status":"off","__v":0},{"_id":"5ebfb847c679c735342173e3","device":"door","status":"off","__v":0},{"_id":"5ebfcda4fe4d09416ca92beb","device":"smartSpeaker","status":"off","__v":0},{"_id":"5ebfcdd0fe4d09416ca92bec","device":"smartlight","status":"on"},{"_id":"5ebff59738510f472cb44aa7","__v":0},{"_id":"5ebff61638510f472cb44aa8","__v":0},{"_id":"5ec00d9ca897645b68cbaf12","__v":0},{"_id":"5ec00daca897645b68cbaf13","__v":0}]
+        function onData(list){
+          var dataToAppend="";
+          for(var i=0;i<list.length;i++){
+            dataToAppend+=`<label class="checkbox-inline">`;
+              if(list[i]['status']=="off"){
+                dataToAppend+=`<input  type="checkbox" id="${list[i]['_id']}" data-toggle="toggle" onchange="updateStatus(this,'${list[i]['_id']}','${list[i]['device']}')">${list[i]['device']}`;
+              }else{
+                dataToAppend+=`<input  type="checkbox" id="${list[i]['_id']}" checked data-toggle="toggle" onchange="updateStatus(this,'${list[i]['_id']}','${list[i]['device']}')">${list[i]['device']}`;
+              }
+            dataToAppend+='</label>'
+          }
+          $('#listing').empty();
+          $('#listing').append(dataToAppend);
+        }
+        function updateStatus(checkbox,id,device){
+          var status=checkbox.checked;
+          $.post("/devices/"+device,
+            {
+               status: status?"on":"off"
+            },
+            function(data, status){
+              alert("Data: " + data + "\nStatus: " + status);
+          });
+        }
+        </script>
 </body>
 </html>
