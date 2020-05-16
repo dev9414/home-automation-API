@@ -60,9 +60,10 @@ PUT/PATCH devices/:device
 **Response**
 
 device updated sucessfully
-for starting this API project
 
-start one server in API folder itself
+## for starting this API project
+
+- start first server in API folder itself
 ### command:npx nodemon app.js
 - start second server inside folder axios-crash-master/axios-demo
 
