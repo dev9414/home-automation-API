@@ -64,7 +64,7 @@ for starting this API project
 
 start one server in API folder itself
 ### command:npx nodemon app.js
--start second server inside folder axios-crash-master/axios-demo
+- start second server inside folder axios-crash-master/axios-demo
 
 ### command:npm start
 after POST mthod mongoDB will be updated and all device name will be visible on localhost:3000/ withcheck button
